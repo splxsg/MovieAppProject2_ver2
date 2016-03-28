@@ -49,7 +49,7 @@ public class FragmentMovie extends Fragment {
         /**
          * DetailFragmentCallback for when an item has been selected.
          */
-        public void onItemSelected(String mdata);
+        void onItemSelected(String mdata);
     }
 
     @Override

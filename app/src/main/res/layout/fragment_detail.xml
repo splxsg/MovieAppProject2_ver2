@@ -34,34 +34,35 @@
 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-            android:scaleType="centerCrop"
+            android:scaleType="fitStart"
 
         android:id="@+id/detail_image"
-            android:layout_weight="3"
+
         android:layout_below="@+id/detail_title"
         />
 
         <TextView
-            android:layout_width="34dp"
             android:id="@+id/avg_rate"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
+
             android:gravity="left"
-            android:layout_marginTop="50dp"
+            android:layout_marginLeft="15dip"
             android:text="Rate"
             android:textColor="@android:color/white"
             android:textSize="20dip" />
 
         <ToggleButton
-            android:layout_width="32dp"
+            android:layout_width="32dip"
             android:layout_height="wrap_content"
             android:id="@+id/Favbtn"
             android:textOff=""
             android:textOn=""
-            android:layout_weight="3"
+
+            android:layout_marginLeft="5dip"
             android:button = "@android:drawable/btn_star"
             android:onClick="onToggleStar"
-
+            android:shadowColor="@color/generalbackground"
             android:background="@color/generalbackground" />
     </LinearLayout>
 

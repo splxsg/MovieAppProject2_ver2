@@ -7,8 +7,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
@@ -22,7 +20,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
-import android.widget.ShareActionProvider.OnShareTargetSelectedListener;
+
 
 import com.example.blues.movieapp.data.MovieContract;
 import com.squareup.picasso.Picasso;
@@ -41,7 +39,7 @@ import java.net.URL;
 /**
  * Created by Blues on 3/26/2016.
  */
-public class DetailFragment extends Fragment  implements LoaderManager.LoaderCallbacks<Cursor> {
+public class DetailFragment extends Fragment {
 
 
     static private String MovieID;
@@ -53,7 +51,6 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     public ShareActionProvider mShareActionProvider;
     static final public String MOVIE_SHARE_HASHTAG = " #Movie App";
     static final public String MOVIE_SHARE_HEAD = "Check the trailer: ";
-    private static final int DETAIL_LOADER = 0;
     Intent shareIntent;
 
     public DetailFragment(){
@@ -64,14 +61,10 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
                              Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-
         MovieReview = new FetchMovieReview(rootView);
         Bundle arguments = getArguments();
 
         ImageView imageView = (ImageView)rootView.findViewById(R.id.detail_image);
-        //  Intent intent = getActivity().getIntent();
-        //if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
-        //  JSONSTR = intent.getStringExtra(Intent.EXTRA_TEXT);
         if (arguments != null) {
             JSONSTR = arguments.getString("mdata");
         }
@@ -86,8 +79,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
         try{
             MovieID = perference.getMovieInfoFromJSON(JSONSTR,"id") ;
             ((TextView) rootView.findViewById(R.id.detail_title)).setText("Title: " + perference.getMovieInfoFromJSON(JSONSTR, "original_title") + " (" +perference.getMovieInfoFromJSON(JSONSTR, "release_date")+")");
-            //  ((TextView) rootView.findViewById(R.id.detail_year)).setText("Release on: " + perference.getMovieInfoFromJSON(JSONSTR, "release_date"));
-            ((TextView) rootView.findViewById(R.id.avg_rate)).setText("Rate: " + perference.getMovieInfoFromJSON(JSONSTR, "vote_average") + "/10");
+             ((TextView) rootView.findViewById(R.id.avg_rate)).setText("Rate: " + perference.getMovieInfoFromJSON(JSONSTR, "vote_average") + "/10");
             ((TextView) rootView.findViewById(R.id.detail_text)).setText("Synopsis: " + perference.getMovieInfoFromJSON(JSONSTR, "overview"));
             Picasso.with(getActivity())
                     .load(getPosterUri(perference.getMovieInfoFromJSON(JSONSTR, "poster_path")).toString())
@@ -103,8 +95,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
         trailerbtn3.setVisibility(View.GONE);
         perference.setSharemovietrailer(null);
         MovieReview.execute(MovieID);
-        MovieTrailer = new FetchTrailer(rootView,getActivity());
-        MovieTrailer.execute(MovieID);
+
         final ToggleButton favbtn = (ToggleButton) rootView.findViewById(R.id.Favbtn);
         if(checkFav())
             favbtn.setChecked(true);
@@ -125,10 +116,9 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-       getLoaderManager().initLoader(DETAIL_LOADER, null, this);
+
         super.onActivityCreated(savedInstanceState);
     }
-
 
     private boolean checkFav()
     {
@@ -144,7 +134,6 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
 
     }
 
-
     private void deleteFav()
     {
         int rowsdelete = getActivity().getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI,
@@ -154,47 +143,29 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
         perference.showToaster(getActivity(), "Deleted Favourite Movie!");
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {return null;}
-
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        //if (mShareActionProvider != null) {
-          //  mShareActionProvider.setShareIntent(createShareMovieTrailerIntent());
-    //    }
-    }
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_detail, menu);
         inflater.inflate(R.menu.menu_share, menu);
-
         MenuItem menuItem = menu.findItem(R.id.action_share);
-
-        // Get the provider and hold onto it to set/change the share intent.
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
-
-        //mShareActionProvider.setShareIntent(createShareMovieTrailerIntent());
-       // mShareActionProvider.setOnShareTargetSelectedListener(new onShareTargetSelectedListener(){
-        mShareActionProvider.setShareIntent(createShareMovieTrailerIntent());
-    //return super.onCreateOptionsMenu(menu, inflater);
+       mShareActionProvider.setShareIntent(createShareMovieTrailerIntent());
+        //After loading the share button call the asynctask to obtain trailer information,
+        // in order to avoid call null reference intent in fetchtrailer, asynctask'd better
+        // call after intent has been assigned
+        MovieTrailer = new FetchTrailer(rootView,getActivity());
+        MovieTrailer.execute(MovieID);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-
         return super.onOptionsItemSelected(item);
     }
 
     private Intent createShareMovieTrailerIntent() {
         shareIntent = new Intent(Intent.ACTION_SEND);
-        //shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+       // shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, perference.getSharemovietrailer());
         return shareIntent;
@@ -207,61 +178,41 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
         Uri builtUri = Uri.parse(MOVIE_DATABASE_URL).buildUpon().build();
         return builtUri;
     }
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) { }
-
-
 
     public class FetchTrailer extends AsyncTask<String, Void, String> {
         private final String LOG_TAG = FetchTrailer.class.getSimpleName();
         View rootView;
         private JSONObject[] movieTrailerJSONObject;
         private int TrailerAmount;
-
         private Context context;
-
         public FetchTrailer(View rView, Context mContext) {
             rootView = rView;
             context = mContext;
         }
-
         private void MovieTrailerJSONObject(String JSONstr)
                 throws JSONException {
-
             try {
                 final String js_RESULT = "results";
                 JSONArray jsonarray = new JSONObject(JSONstr).getJSONArray(js_RESULT);
-
                 movieTrailerJSONObject = new JSONObject[jsonarray.length()];
 
-                Log.v("MOVIETRAIL",jsonarray.toString());
-                for (int i = 0; i < jsonarray.length(); i++) {
+                for (int i = 0; i < jsonarray.length(); i++)
                     movieTrailerJSONObject[i] = jsonarray.getJSONObject(i);
-                    // if (perference.getMovieInfoFromJSON(movieTrailerJSONObject[j].toString(), "type") == "Trailer")
-                    //   j++;
-                }
-
                 TrailerAmount = jsonarray.length();
             } catch (JSONException e) {
                 Log.e(LOG_TAG, "Error ", e);
             }
         }
 
-
         protected String doInBackground(String[] params) {
-
             Log.v(LOG_TAG, "PARAMS LENGTH " + params.length);
             if (params.length == 0) {
                 return null;
             }
-            // These two need to be declared outside the try/catch
-            // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
-
             String MovieVideoJsonStr = null;
             try {
-// Construct the URL for requesting data from themoviedb via legal API
                 final String MOVIE_DATABASE_URL = "http://api.themoviedb.org/3/movie/" + params[0] + "/videos";
                 final String APPID_PARAM = "api_key";
                 Uri builtUri = Uri.parse(MOVIE_DATABASE_URL).buildUpon()
@@ -297,7 +248,6 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
                     return null;
                 }
                 MovieVideoJsonStr = buffer.toString();
-
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
                 // If the code didn't successfully get the movie data, there's no point in attemping
@@ -315,19 +265,14 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
                     }
                 }
             }
-            //storeID();
             return MovieVideoJsonStr;
         }
-
 
         @Override
         protected void onPostExecute(String result) {
             final String TrailerID1,TrailerID2,TrailerID3;
             if (result != null) {
-
-
                 try {
-                    Log.v("trailexe",result);
                     MovieTrailerJSONObject(result);
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, "Error ", e);
@@ -337,15 +282,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
                     final Button trailerbtn2 = (Button) rootView.findViewById(R.id.trailer2);
                     final Button trailerbtn3 = (Button) rootView.findViewById(R.id.trailer3);
                     if(TrailerAmount>=1) {
-                        //DetailFragment.resetloader();
-
-                        //  mShareActionProvider.setShareIntent(createShareMovieTrailerIntent());
-                        // getmShareActionProvider().setShareIntent();
-                        // DetailActivity.mShareActionProvider.setShareIntent(createShareMovieTrailerIntent());
-
-                        Log.v("trailexe1 ",movieTrailerJSONObject[0].toString());
                         TrailerID1 = perference.getMovieInfoFromJSON(movieTrailerJSONObject[0].toString(), "key");
-
                         shareIntent.putExtra(Intent.EXTRA_TEXT, MOVIE_SHARE_HEAD + " https://www.youtube.com/watch?v="+ TrailerID1 + MOVIE_SHARE_HASHTAG);
                         trailerbtn1.setVisibility(View.VISIBLE);
                         trailerbtn1.setOnClickListener(new View.OnClickListener() {
@@ -383,21 +320,8 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
                 } catch (JSONException e) {
                 }
             }
-
-
-
-
         }
-
-
-
-
     }
-
-
-
-
-
 }
 
 

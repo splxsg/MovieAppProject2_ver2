@@ -7,8 +7,6 @@
     android:layout_height="fill_parent"
     tools:context="com.example.blues.movieapp.MainActivity">
 
-
-
 <!--
 This layout is a two-pane layout for the Items master/detail flow.
 -->
@@ -17,7 +15,6 @@ This layout is a two-pane layout for the Items master/detail flow.
     android:id="@+id/Fragment_Movie"
     android:name="com.example.blues.movieapp.FragmentMovie"
     android:layout_width="5dp"
-
     android:layout_height="match_parent"
     android:layout_weight="1"
     tools:layout="@android:layout/list_content" />

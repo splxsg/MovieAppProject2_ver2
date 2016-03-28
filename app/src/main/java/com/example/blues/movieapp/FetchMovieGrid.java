@@ -23,23 +23,14 @@ public class FetchMovieGrid extends AsyncTask<String, Void, String> {
     private String currentSort = perference.getCurrentsort();
     private JSONObject[] movieJSONObject;
 
-public void FetchMovieGrid(){}
-
-    public void FetchMovieGrid(JSONObject[] movieJSONObject1){
-
-    }
-
-
 
     private void UpdatemovieJSONObject(String JSONstr)
             throws JSONException {
         int moviePerPage;
         try {
-            JSONObject jsonobject = new JSONObject(JSONstr);
+
             JSONObject[] tempjsonobject;
-
             final String js_RESULT = "results";
-
             JSONArray jsonarray = new JSONObject(JSONstr).getJSONArray(js_RESULT);
 
             if (movieJSONObject == null) {             //if app just start or request a new sort method, movieJSONObject will be initial
@@ -164,7 +155,6 @@ public void FetchMovieGrid(){}
                 FragmentMovie.movieImageAdapter.setJSON(movieJSONObject);
                 Log.v(LOG_TAG, "JSON results" + movieJSONObject.toString());
                 FragmentMovie.movieImageAdapter.notifyDataSetChanged();
-               // perference.loadflag = true;
                 if (sortChange)
                     FragmentMovie.movieGridView.setAdapter(FragmentMovie.movieImageAdapter);  //if the sort type changed by menu, gridview goes to top
             } catch (JSONException e) {

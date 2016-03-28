@@ -12,19 +12,11 @@ import android.net.Uri;
  */
 public class MovieProvider extends ContentProvider {
 
-    // The URI Matcher used by this content provider.
+
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private MovieDbHelper mOpenHelper;
 
     static final int MOVIE = 100;
-
-    //private static final SQLiteQueryBuilder sMovieByID
-
-
-    private static final String sMovieWithMovieid =
-            MovieContract.MovieEntry.TABLE_NAME+"."+ MovieContract.MovieEntry.COLUMN_MOVIE_ID+" = ? ";
-
-
     static UriMatcher buildUriMatcher() {
         // I know what you're thinking.  Why create a UriMatcher when you can use regular
         // expressions instead?  Because you're not crazy, that's why.
@@ -37,7 +29,6 @@ public class MovieProvider extends ContentProvider {
 
         // For each type of URI you want to add, create a corresponding code.
         matcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIE);
-
         return matcher;
     }
 

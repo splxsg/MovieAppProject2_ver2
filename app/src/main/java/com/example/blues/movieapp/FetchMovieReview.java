@@ -44,29 +44,7 @@ public FetchMovieReview(View rView){rootView= rView;}
                 } catch (JSONException e) {
                         Log.e(LOG_TAG, "Error ", e);
                 }
-
-
         }
-
-      /*  private void storeID()
-        {
-            Log.d("storeID", "1111111111");
-            ContentValues movieValue = new ContentValues();
-            Log.d("storeID", "22222222222");
-
-                Vector<ContentValues> cVVector = new Vector<ContentValues>(100);
-                movieValue.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, "testID");
-                movieValue.put(MovieContract.MovieEntry.COLUMN_MOVIE_NAME, "testMOVIENAME");
-                cVVector.add(movieValue);
-                ContentValues[] cvArray = new ContentValues[2];
-                cVVector.toArray(cvArray);
-                int inserted;
-                Log.d("storeID", cVVector.toString());
-                inserted = mContext.getContentResolver().bulkInsert(MovieContract.MovieEntry.CONTENT_URI,cvArray);
-                Log.d("intert SQL", "FetchWeatherTask Complete. " + inserted + " Inserted");
-
-        }*/
-
 
 @Override
 protected String doInBackground(String[] params) {

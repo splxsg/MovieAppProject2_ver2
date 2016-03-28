@@ -16,7 +16,6 @@ import org.json.JSONObject;
 
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
-    private final String LOG_TAG = "ImageAdapter";
     private JSONObject[] movieJSONObject;
     public ImageAdapter(Context context) {
         this.mContext = context;
@@ -33,10 +32,8 @@ public class ImageAdapter extends BaseAdapter {
         return movieJSONObject;
     }
 
-
     @Override
     public int getCount() {
-
         if (movieJSONObject != null)
             return movieJSONObject.length;
         else
@@ -49,7 +46,6 @@ public class ImageAdapter extends BaseAdapter {
         if(movieJSONObject != null)
         {try {
             s = getPosterUri(movieJSONObject[position].getString("poster_path")).toString();
-
         } catch (JSONException e) {
         }
             return s;}
@@ -59,18 +55,13 @@ public class ImageAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-
         return position;
     }
 
     @Override
     public View getView(int position, View convertView,
                         ViewGroup parent) {
-
         ImageView imageView;
-
-
-
 //            check to see if we have a view
         if (convertView == null) {
 
@@ -81,7 +72,6 @@ public class ImageAdapter extends BaseAdapter {
 
         } else {
 //                use the recycled view object
-
             imageView = (ImageView) convertView;
             //textView = (TextView) convertView;
         }
@@ -103,8 +93,5 @@ public class ImageAdapter extends BaseAdapter {
         Uri builtUri = Uri.parse(MOVIE_DATABASE_URL).buildUpon().build();
         return builtUri;
     }
-
-
-
 }
 
