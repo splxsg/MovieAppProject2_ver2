@@ -345,7 +345,8 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
 
                         Log.v("trailexe1 ",movieTrailerJSONObject[0].toString());
                         TrailerID1 = perference.getMovieInfoFromJSON(movieTrailerJSONObject[0].toString(), "key");
-                        shareIntent.putExtra(Intent.EXTRA_TEXT, MOVIE_SHARE_HEAD + " https://www.youtube.com/watch?v=" + TrailerID1+ MOVIE_SHARE_HASHTAG);
+
+                        shareIntent.putExtra(Intent.EXTRA_TEXT, MOVIE_SHARE_HEAD + " https://www.youtube.com/watch?v="+ TrailerID1 + MOVIE_SHARE_HASHTAG);
                         trailerbtn1.setVisibility(View.VISIBLE);
                         trailerbtn1.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View v) {
